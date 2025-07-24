@@ -1,0 +1,94 @@
+import { Response } from 'express';
+import { AuthRequest } from '../middleware/auth.middleware';
+import prisma from '../../config/prisma';
+
+// GET /api/posts - Get all posts for the feed
+export const getPosts = async (req: AuthRequest, res: Response) => {
+    try {
+        const posts = await prisma.post.findMany({
+            orderBy: { createdAt: 'desc' },
+            include: {
+                author: {
+                    select: { name: true, pictureUrl: true, title: true }
+                },
+                likes: {
+                    select: { userId: true }
+                },
+                tags: {
+                    select: { name: true }
+                },
+                _count: {
+                    select: { likes: true }
+                }
+            }
+        });
+        
+        // Add a 'likedByMe' field to each post for the frontend
+        const postsWithLikeStatus = posts.map(post => ({
+            ...post,
+            likedByMe: post.likes.some(like => like.userId === req.user?.id)
+        }))
+
+        res.status(200).json(postsWithLikeStatus);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching posts' });
+    }
+};
+
+// POST /api/posts - Create a new post
+export const createPost = async (req: AuthRequest, res: Response) => {
+    const { content } = req.body;
+    if (!req.user) return res.status(401).json({ message: "Not authorized" });
+
+    try {
+        const newPost = await prisma.post.create({
+            data: {
+                content,
+                authorId: req.user.id,
+            },
+            include: {
+                author: {
+                    select: { name: true, pictureUrl: true, title: true }
+                }
+            }
+        });
+        res.status(201).json(newPost);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error creating post' });
+    }
+};
+
+// POST /api/posts/:id/like - Like or unlike a post
+export const toggleLike = async (req: AuthRequest, res: Response) => {
+    const { id } = req.params;
+    if (!req.user) return res.status(401).json({ message: "Not authorized" });
+
+    try {
+        const existingLike = await prisma.like.findUnique({
+            where: {
+                userId_postId: {
+                    userId: req.user.id,
+                    postId: id,
+                }
+            }
+        });
+        
+        if (existingLike) {
+            await prisma.like.delete({ where: { userId_postId: { userId: req.user.id, postId: id } }});
+            res.status(200).json({ message: 'Post unliked' });
+        } else {
+            await prisma.like.create({
+                data: {
+                    userId: req.user.id,
+                    postId: id,
+                }
+            });
+            res.status(200).json({ message: 'Post liked' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error toggling like' });
+    }
+}
