@@ -19,7 +19,7 @@ RUN pnpm install --force
 COPY ./nova-backend ./
 # NOW, run the dev tool commands
 RUN pnpm exec prisma generate
-RUN pnpm exec tsc
+RUN pnpm exec tsc --noEmit false --outDir dist
 # FINALLY, for the final image, we'll reinstall only production dependencies
 RUN pnpm install --prod --force
 
