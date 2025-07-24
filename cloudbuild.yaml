@@ -9,6 +9,13 @@ steps:
     - 'run'
     - 'deploy'
     - 'nova-app'
+    # --- ADD/MODIFY THESE FLAGS ---
+    - '--cpu=1'
+    - '--memory=1Gi'
+    - '--min-instances=1' # This keeps one instance always warm
+    - '--max-instances=2' # Good practice to set a max
+     # ----------------------------
+
     - '--image'
     - 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
     - '--region'
