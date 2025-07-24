@@ -20,3 +20,5 @@ steps:
     - '--add-cloudsql-instances'
     - 'nova-staging-cgn:asia-south1:nova-db-staging'
 images: ['us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
+options:
+  logging: CLOUD_LOGGING_ONLY
