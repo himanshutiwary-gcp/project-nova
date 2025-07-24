@@ -1,39 +1,41 @@
 # --- Stage 1: Build Frontend ---
 FROM node:18-alpine AS frontend-builder
 WORKDIR /app
-# Use the 'project-nova-starter' subdirectory
-COPY ./project-nova-starter ./
+COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
 RUN npm install -g pnpm
-RUN pnpm install
-# Ensure all build dependencies are there before building
-RUN pnpm exec tsc --noEmit || true
+RUN pnpm install --force
+COPY ./project-nova-starter ./
 RUN pnpm run build
 
 # --- Stage 2: Build Backend ---
 FROM node:18-alpine AS backend-builder
 WORKDIR /app
-# Use the 'nova-backend' subdirectory
-COPY ./nova-backend ./
+# First, copy the package files
+COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
 RUN npm install -g pnpm
-RUN pnpm install --prod
+# NOW, install ALL dependencies so we can use dev tools
+RUN pnpm install --force
+# THEN, copy the rest of the code
+COPY ./nova-backend ./
+# NOW, run the dev tool commands
 RUN pnpm exec prisma generate
 RUN pnpm exec tsc
+# FINALLY, for the final image, we'll reinstall only production dependencies
+RUN pnpm install --prod --force
 
 # --- Stage 3: Final Production Image ---
 FROM node:18-alpine
 WORKDIR /app
 
-# Copy backend node_modules from its builder
+# Copy backend dependencies
 COPY --from=backend-builder /app/node_modules ./node_modules
-
-# Copy FINAL compiled backend code from its builder
+# Copy compiled backend code
 COPY --from=backend-builder /app/dist ./dist
+# Copy backend package and schema files
+COPY --from=backend-builder /app/package.json .
+COPY --from=backend-builder /app/prisma ./prisma
 
-# Copy backend's package.json and prisma schema for runtime
-COPY ./nova-backend/package.json .
-COPY ./nova-backend/prisma ./prisma
-
-# Copy the BUILT frontend into a 'public' folder for serving
+# Copy built frontend files
 COPY --from=frontend-builder /app/dist ./public
 
 EXPOSE 8080
