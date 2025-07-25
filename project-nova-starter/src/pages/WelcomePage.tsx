@@ -95,7 +95,7 @@ const RegisterForm = () => {
 // --- MAIN WELCOME PAGE ---
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
     const novaLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png";
-    const videoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova_intro.mp4";
+    const videoUrl = "https://storage.googleapis.com/htiwary-portfolio/project11.mp4";
 
     // Animation Variants for the headline
     const sentence = {
