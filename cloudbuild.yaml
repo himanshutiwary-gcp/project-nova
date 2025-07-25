@@ -1,6 +1,6 @@
-  steps:
+steps:
 # Step 1: Build the unified application container
-- name: 'gcr.io/cloud-builders/docker'
+ - name: 'gcr.io/cloud-builders/docker'
   id: 'Build'
   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
 
