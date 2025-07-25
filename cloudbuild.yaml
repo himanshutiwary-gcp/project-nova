@@ -1,50 +1,30 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  id: 'Build'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
+ args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
 - name: 'gcr.io/cloud-builders/docker'
-  id: 'Push'
-  args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
+ args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'Apply Database Migrations'
-  entrypoint: 'gcloud'
-  args:
-    - 'run'
-    - 'jobs'
-    - 'update'
-    - 'nova-db-migrate'
-    - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
-    - '--region=us-central1'
-    - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest'
-    - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
-    - '--command=pnpm'
-    - '--args=run,db:deploy'
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'Execute Migration Job'
-  entrypoint: 'gcloud'
-  args:
-    - 'run'
-    - 'jobs'
-    - 'execute'
-    - 'nova-db-migrate'
-    - '--wait' # Wait for the migration to finish
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'Deploy Application'
-  entrypoint: 'gcloud'
-  args:
-    - 'run'
-    - 'deploy'
-    - 'nova-app'
-    - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
-    - '--region=us-central1'
-    - '--platform=managed'
-    - '--allow-unauthenticated'
-    - '--cpu=1'
-    - '--memory=1Gi'
-    - '--min-instances=1'
-    - '--max-instances=2'
-    - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest,JWT_SECRET=NOVA_JWT_SECRET:latest,VITE_GOOGLE_CLIENT_ID=NOVA_GOOGLE_CLIENT_ID:latest'
-    - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
+ entrypoint: gcloud
+ args:
+  - 'run'
+  - 'deploy'
+  - 'nova-app'
+  # --- ADD/MODIFY THESE FLAGS ---
+  - '--cpu=1'
+  - '--memory=1Gi'
+  - '--min-instances=1' # This keeps one instance always warm
+  - '--max-instances=2' # Good practice to set a max
+  - '--image'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
+  - '--region'
+  - 'us-central1'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+  - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest,JWT_SECRET=NOVA_JWT_SECRET:latest,VITE_GOOGLE_CLIENT_ID=NOVA_GOOGLE_CLIENT_ID:latest'
+  - '--set-env-vars=DB_USER=postgres'
+  - '--add-cloudsql-instances'
+  - 'nova-staging-cgn:asia-south1:nova-db-staging'
 images: ['us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
 options:
-  logging: CLOUD_LOGGING_ONLY
+ logging: CLOUD_LOGGING_ONLY
