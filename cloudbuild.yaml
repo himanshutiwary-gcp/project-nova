@@ -11,15 +11,21 @@ steps:
   args:
     - 'run'
     - 'jobs'
-    - 'execute'
-    - 'nova-db-migrate'  # The name for our one-off migration job
+    - 'update'
+    - 'nova-db-migrate'
     - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
     - '--region=us-central1'
     - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest'
     - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
     - '--command=pnpm'
     - '--args=run,db:deploy'
-    - '--wait' # This is crucial: it forces the build to wait for this step to finish
+    - '&&' # This allows us to run a second command in the same step
+    - 'gcloud'
+    - 'run'
+    - 'jobs'
+    - 'execute'
+    - 'nova-db-migrate'
+    - '--wait' # Wait for the migration to finish
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Deploy Application'
   entrypoint: 'gcloud'
