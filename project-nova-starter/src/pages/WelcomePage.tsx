@@ -93,7 +93,7 @@ const RegisterForm = () => {
 
 // --- MAIN WELCOME PAGE (THE FINAL FUSION DESIGN) ---
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
-    const backgroundImageUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/gcp_background.png";
+    const backgroundImageUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/about_bg.jpg";
     const novaLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png";
     const cognizantLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/cognizant.png";
     const videoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova_intro.mp4";
@@ -124,8 +124,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
                     </div>
                     {/* Top-right Cognizant Logo - Large and Prominent */}
                     <div className="flex items-center gap-3">
-                         <span className='font-semibold text-muted-foreground hidden md:inline'>In partnership with</span>
-                         <img src={cognizantLogoUrl} alt="Cognizant Logo" className="h-20"/>
+                         <img src={cognizantLogoUrl} alt="Cognizant Logo" className="h-80"/>
                     </div>
                 </header>
 
