@@ -91,83 +91,75 @@ const RegisterForm = () => {
     );
 };
 
-// --- MAIN WELCOME PAGE COMPONENT (ALL NEW CHANGES ARE HERE) ---
+// --- MAIN WELCOME PAGE COMPONENT ---
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
     const backgroundImageUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/gcp_background.png";
     const novaLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png";
     const cognizantLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/cognizant.png";
-
-    // --- THIS IS THE NEW PART ---
-    // Point this to your actual video file in Cloud Storage
     const videoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova_intro.mp4";
 
     return (
-        <main className="w-full min-h-screen relative overflow-hidden bg-background">
+        <main className="w-full min-h-screen relative bg-background overflow-hidden">
             {/* Background Image Layer */}
-            <div className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0" style={{ backgroundImage: `url(${backgroundImageUrl})`, opacity: 0.25 }} />
-
-            {/* Gradient Overlay Layer */}
-            <div className="absolute inset-0 bg-gradient-to-br from-background/60 via-background/90 to-background z-10" />
+            <div 
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+                style={{
+                    backgroundImage: `url(${backgroundImageUrl})`,
+                    opacity: 0.4, // Very subtle, letting the blue theme dominate
+                }}
+            />
+             {/* Gradient Overlay Layer - A subtle vignette effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-background/80 to-background z-10" />
 
             {/* Content Layer */}
-            <div className="w-full min-h-screen relative z-20 grid grid-cols-1 lg:grid-cols-2">
+            <div className="w-full min-h-screen relative z-20 flex flex-col">
 
-                {/* Left Side: Landing Page Content */}
-                <div className="flex flex-col h-full p-10 lg:p-16">
-                    {/* Header: Positioned at the top */}
-                    <header className='flex items-center gap-6'>
-                      <img src={novaLogoUrl} alt="Nova Logo" className="h-16 w-16"/>
-                      <div className='border-l-2 border-border pl-6'>
-                        <h1 className='text-4xl font-extrabold tracking-tight'>PROJECT NOVA</h1>
-                        <div className='flex items-center gap-2 mt-1'>
-                           <p className='text-sm font-medium text-muted-foreground'>A Cognizant & Google Cloud Initiative</p>
-                           <img src={cognizantLogoUrl} alt="Cognizant Logo" className="h-5"/>
-                        </div>
-                      </div>
-                    </header>
+                {/* Top-left Nova Header */}
+                <header className='absolute top-0 left-0 p-8 lg:p-12 flex items-center gap-5'>
+                    <img src={novaLogoUrl} alt="Nova Logo" className="h-16 w-16"/>
+                    <h1 className='text-4xl font-extrabold tracking-tight'>PROJECT NOVA</h1>
+                </header>
 
-                    {/* Main Content Sections: Flex-grow pushes footer down */}
-                    <main className='flex-grow flex flex-col justify-center py-12'>
-                        <section id="tagline" className='mb-12'>
-                            <h2 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground">
-                                Igniting Transformation through <span className="text-primary">Google Cloud.</span>
+                {/* Top-right Cognizant Logo - Positioned and Sized */}
+                <div className="absolute top-0 right-0 p-8 lg:p-12">
+                    <img src={cognizantLogoUrl} alt="Cognizant Logo" className="h-14 opacity-80"/>
+                </div>
+
+                {/* Main Content Grid */}
+                <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 items-center">
+                    {/* Left Side: Landing Page Content */}
+                    <div className="hidden lg:flex flex-col justify-center p-12 lg:p-24 space-y-12">
+                        <section id="tagline">
+                            <h2 className="text-5xl xl:text-6xl font-extrabold tracking-tight text-foreground">
+                                Igniting Transformation with <span className="text-primary">Google Cloud.</span>
                             </h2>
-                            <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                                A collaborative platform to showcase projects, share technical expertise, and drive the future of cloud technology forward.
+                            <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
+                                A collaborative platform to showcase implementation and architectural skills, share technical expertise, and drive the future of cloud technology forward using Google Cloud Platform.
                             </p>
                         </section>
 
                         <section id="video">
-                            <h3 className='text-2xl font-bold mb-4'>Why Nova?</h3>
-                            {/* --- NEW CUSTOM VIDEO PLAYER --- */}
-                            <div className="w-full max-w-2xl rounded-lg overflow-hidden shadow-2xl border bg-black">
+                            {/* Video Player without "Why Nova?" title */}
+                            <div className="w-full max-w-2xl rounded-lg overflow-hidden shadow-2xl border-2 border-border/50">
                                 <video 
                                     className="w-full h-full"
-                                    controls  // Show play/pause, volume controls
-                                    playsInline // Important for mobile browsers
-                                    muted     // Often needed for autoplay to work
-                                    autoPlay  // Optional: if you want it to play on load
-                                    loop      // Optional: if you want it to loop
+                                    controls
+                                    playsInline
+                                    muted
+                                    autoPlay
+                                    loop
                                     src={videoUrl}
-                                    // You can also add a poster image that shows before the video plays
-                                    // poster="URL_TO_A_THUMBNAIL_IMAGE.jpg"
                                 >
                                     Your browser does not support the video tag.
                                 </video>
                             </div>
-                            {/* ----------------------------- */}
                         </section>
-                    </main>
+                    </div>
 
-                    {/* Footer at the bottom */}
-                    <footer className='text-xs text-muted-foreground'>
-                       © 2025 Project Nova. All rights reserved.
-                    </footer>
-                </div>
-
-                {/* Right Side: Login/Register Form */}
-                 <div className="flex items-center justify-center p-6 bg-background/50 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none">
-                    {showLogin ? <LoginForm /> : <RegisterForm />}
+                    {/* Right Side: Login/Register Form */}
+                     <div className="flex items-center justify-center p-6">
+                        {showLogin ? <LoginForm /> : <RegisterForm />}
+                    </div>
                 </div>
             </div>
         </main>
