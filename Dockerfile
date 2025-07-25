@@ -1,27 +1,35 @@
-# --- Stage 1: Build Frontend ---
-FROM node:18-alpine AS frontend-builder
-WORKDIR /app
-COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
-RUN npm install -g pnpm
-RUN pnpm install --force
-COPY ./project-nova-starter ./
-RUN pnpm run build
-
-# --- Stage 2: Build Backend ---
+# =================================================================
+# Stage 1: Backend Dependencies & Builder
+# =================================================================
 FROM node:18-alpine AS backend-builder
 WORKDIR /app
-# First, copy the package files
-COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
 RUN npm install -g pnpm
-# NOW, install ALL dependencies so we can use dev tools
+COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
 RUN pnpm install --force
-# THEN, copy the rest of the code
 COPY ./nova-backend ./
-# NOW, run the dev tool commands
 RUN pnpm exec prisma generate
-RUN pnpm exec tsc --noEmit false --outDir dist
-# FINALLY, for the final image, we'll reinstall only production dependencies
+RUN pnpm exec tsc
 RUN pnpm install --prod --force
+
+# =================================================================
+# Stage 2: Frontend Dependencies & Builder
+# =================================================================
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app
+RUN npm install -g pnpm
+COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
+COPY ./project-nova-starter/tsconfig*.json ./
+COPY ./project-nova-starter/vite.config.ts ./
+RUN pnpm install --force
+COPY ./project-nova-starter ./
+
+# --- THE FINAL DEBUGGING STEP ---
+# Print the contents of tsconfig.json to the log.
+RUN echo "--- Verifying tsconfig.json contents ---" && cat tsconfig.json
+# --------------------------------
+
+# Run the build command with the explicit project flag
+RUN pnpm run build
 
 # --- Stage 3: Final Production Image ---
 FROM node:18-alpine
