@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion"; // Import for animations
 
 // UI & Auth Imports
 import { Button } from '@/components/ui/button';
@@ -91,74 +92,101 @@ const RegisterForm = () => {
   );
 };
 
-// --- MAIN WELCOME PAGE (THE FINAL FUSION DESIGN) ---
+// --- MAIN WELCOME PAGE ---
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
-    const backgroundImageUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/about_bg.jpg";
     const novaLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png";
-    const cognizantLogoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/cognizant.png";
     const videoUrl = "https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova_intro.mp4";
+
+    // Animation Variants for the headline
+    const sentence = {
+        hidden: { opacity: 1 },
+        visible: {
+            opacity: 1,
+            transition: {
+                delay: 0.5,
+                staggerChildren: 0.08,
+            },
+        },
+    };
+    const letter = {
+        hidden: { opacity: 0, y: 50 },
+        visible: {
+            opacity: 1,
+            y: 0,
+        },
+    };
+
+    const headlineText = "Igniting Transformation with Google Cloud";
 
     return (
         <main className="w-full min-h-screen relative bg-background text-foreground overflow-hidden">
             
-            {/* Background Image & Vignette Layer */}
-            <div 
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 transition-all duration-1000 ease-in-out"
-                style={{
-                    backgroundImage: `url(${backgroundImageUrl})`,
-                    opacity: 0.15, // Visible but not overwhelming
-                    transform: 'scale(1.1)', // Slightly zoomed in
-                }}
-            />
-            <div className="absolute inset-0 bg-background/60 backdrop-blur-sm z-10" />
+            {/* The new animated background layer */}
+            <div className="absolute inset-0 z-0 aurora-glow" />
 
             {/* Content Layer */}
-            <div className="w-full min-h-screen relative z-20 flex flex-col">
-
-                {/* Top Header Row */}
-                <header className="container mx-auto px-6 lg:px-8 py-8 flex justify-between items-center">
-                    {/* Top-left Nova Header */}
-                    <div className='flex items-center gap-5'>
-                        <img src={novaLogoUrl} alt="Nova Logo" className="h-14 w-14"/>
-                        <h1 className='text-3xl font-extrabold tracking-tight'>PROJECT NOVA</h1>
-                    </div>
-                    {/* Top-right Cognizant Logo - Large and Prominent */}
-                    <div className="flex items-center gap-3">
-                         <img src={cognizantLogoUrl} alt="Cognizant Logo" className="h-80"/>
-                    </div>
-                </header>
-
-                {/* Main Content Grid */}
-                <div className="flex-grow grid grid-cols-1 lg:grid-cols-5 items-center container mx-auto px-6 lg:px-8">
+            <div className="w-full min-h-screen relative z-10 flex items-center justify-center p-4">
+                <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     
-                    {/* Left Content Column (Takes 3/5 width on large screens) */}
-                    <div className="lg:col-span-3 flex flex-col justify-center space-y-12 py-12 text-center lg:text-left">
-                        <section id="tagline">
-                            <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-tight">
-                                Igniting Transformation with <span className="text-primary">Google Cloud</span>
-                            </h2>
-                            <p className="mt-6 max-w-2xl text-lg text-muted-foreground mx-auto lg:mx-0">
-                                An elite platform for innovators to showcase projects, share expertise, and drive the future of cloud technology forward.
-                            </p>
-                        </section>
+                    {/* Left Side: The new integrated branding and content */}
+                    <div className="flex flex-col gap-8 text-center lg:text-left">
+                        
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className='flex items-center gap-6 justify-center lg:justify-start'
+                        >
+                          <img src={novaLogoUrl} alt="Nova Logo" className="h-24 w-24"/>
+                          <h1 className='text-8xl font-extrabold tracking-tighter bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent'>
+                            NOVA
+                          </h1>
+                        </motion.div>
 
-                        <section id="video">
-                            {/* Video Player */}
-                            <div className="w-full max-w-2xl mx-auto lg:mx-0 rounded-lg overflow-hidden shadow-2xl border-2 border-border/30">
-                                <video 
-                                    className="w-full h-full"
-                                    controls playsInline muted autoPlay loop src={videoUrl}
-                                >
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                        </section>
+                        <motion.h2 
+                            className="text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
+                            variants={sentence}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {headlineText.split(" ").map((word, index) => (
+                                <motion.span key={word + "-" + index} variants={letter} className="inline-block">
+                                    {word}&nbsp; {/* Add space between words */}
+                                </motion.span>
+                            ))}
+                        </motion.h2>
+
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.5, ease: "easeOut" }}
+                            className="max-w-xl text-lg text-muted-foreground mx-auto lg:mx-0"
+                        >
+                            An elite platform for innovators to showcase implementation and architectures, share expertise, and drive the future of cloud technology forward using Google Cloud Platform.
+                        </motion.p>
+                        
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.8, ease: "easeOut" }}
+                            className="w-full max-w-xl mx-auto lg:mx-0 rounded-lg overflow-hidden shadow-2xl border-2 border-border/30"
+                        >
+                            <video className="w-full h-full" controls playsInline muted autoPlay loop src={videoUrl}>
+                                Your browser does not support the video tag.
+                            </video>
+                        </motion.div>
                     </div>
 
-                    {/* Right Content Column (Takes 2/5 width on large screens) */}
-                    <div className="lg:col-span-2 flex items-center justify-center p-6">
+                    {/* Right Side: The Login/Register Form with animation */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.8, delay: 2.1, ease: "easeOut" }}
+                        className="flex items-center justify-center p-6"
+                    >
                         {showLogin ? <LoginForm /> : <RegisterForm />}
-                    </div>
+                    </motion.div>
+
                 </div>
             </div>
         </main>
