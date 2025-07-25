@@ -4,46 +4,63 @@
 
 @layer base {
   :root {
-    /* Refined Bluish Innovation Theme */
-    --background: 222 47% 11%; /* The deep, dark navy blue */
-    --foreground: 210 40% 98%; /* Bright, clear text */
+    /* "Digital Aurora" Dark Theme */
+    --background: 224 71% 4%; /* A very deep, near-black blue */
+    --foreground: 215 28% 97%;
 
-    --card: 222 47% 14%; /* A slightly lighter-navy for cards */
-    --card-foreground: 210 40% 98%;
+    --card: 224 71% 6%;
+    --card-foreground: 215 28% 97%;
 
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 28% 97%;
 
-    --primary: 210 100% 56%; /* A vibrant, electric "Google" blue */
-    --primary-foreground: 222 47% 11%; /* High-contrast text for primary buttons */
+    --primary: 217 91% 60%;
+    --primary-foreground: 210 20% 98%;
 
-    --secondary: 222 47% 20%; /* A subtle, dark secondary element */
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 224 71% 10%;
+    --secondary-foreground: 215 28% 97%;
 
-    --muted: 222 47% 18%;
-    --muted-foreground: 222 25% 55%;
+    --muted: 224 71% 10%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 222 47% 20%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 224 71% 10%;
+    --accent-foreground: 215 28% 97%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 222 47% 18%;
-    --input: 222 47% 18%;
-    --ring: 210 100% 56%;
+    --border: 224 71% 10%;
+    --input: 224 71% 10%;
+    --ring: 217 91% 60%;
 
     --radius: 0.75rem;
+
+    /* Custom properties for the animated glow */
+    --glow-color-1: 217 100% 50%; /* Electric Blue */
+    --glow-color-2: 173 96% 42%;  /* Cyan/Teal */
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* Keyframes for the animated background */
+@keyframes background-pan {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Utility class to apply the animated aurora effect */
+.aurora-glow {
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.3), transparent),
+              radial-gradient(ellipse 80% 50% at 50% 120%, hsl(var(--glow-color-2) / 0.3), transparent);
+  background-size: 200% 200%;
+  animation: background-pan 15s ease-in-out infinite;
 }
