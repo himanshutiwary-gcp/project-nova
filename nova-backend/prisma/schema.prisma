@@ -12,16 +12,23 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  name       String
-  pictureUrl String?
-  title      String?
-  bio        String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  posts      Post[]
-  likes      Like[]
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String
+  pictureUrl     String?
+
+  // New fields from registration
+  specialization String?
+  role           String?
+  site           String?
+
+  // We will add this title field to combine role and specialization
+  title          String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  posts          Post[]
+  likes          Like[]
 }
 
 model Post {
