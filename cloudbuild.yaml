@@ -20,7 +20,10 @@ steps:
     - '--command=pnpm'
     - '--args=run,db:deploy'
     - '&&' # This allows us to run a second command in the same step
-    - 'gcloud'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Execute Migration Job'
+  entrypoint: 'gcloud'
+  args:
     - 'run'
     - 'jobs'
     - 'execute'
