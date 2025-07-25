@@ -10,7 +10,7 @@ steps:
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
 
 # Step 3: Apply Database Migrations. THIS IS THE FIX.
-- name: 'gcr.io/google/cloudsdktool/cloud-sdk'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Apply Database Migrations'
   entrypoint: 'gcloud'
   args:
