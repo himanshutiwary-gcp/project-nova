@@ -114,24 +114,24 @@ const RegisterForm = () => {
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
     // A simple carousel state
     const [currentMember, setCurrentMember] = useState(0);
-    const teamMembers = [
-        { name: "Himanshu Tiwary", title: "SME-Networking", description: "Himanshu architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/himanshu.jpg" },
-        { name: "Lavanya Lanka", title: "TSR-Infra", description: "Lavanya architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/lavanya.jpg" },
-        { name: "Anurag Kumar", title: "TSR-Platform", description: "Anurag architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/anurag.jpg" },
-        { name: "Dhiraj Kumar", title: "TSR-Platform", description: "Dhiraj specializes in Kubernetes and Anthos, helping teams orchestrate complex microservice architectures with ease and reliability.", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/dhiraj.jpg" },
-    ];
+   // const teamMembers = [
+     //   { name: "Himanshu Tiwary", title: "SME-Networking", description: "Himanshu architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/himanshu.jpg" },
+       // { name: "Lavanya Lanka", title: "TSR-Infra", description: "Lavanya architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/lavanya.jpg" },
+       // { name: "Anurag Kumar", title: "TSR-Platform", description: "Anurag architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/anurag.jpg" },
+       // { name: "Dhiraj Kumar", title: "TSR-Platform", description: "Dhiraj specializes in Kubernetes and Anthos, helping teams orchestrate complex microservice architectures with ease and reliability.", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/dhiraj.jpg" },
+    //];
 
     const nextMember = () => setCurrentMember((prev) => (prev + 1) % teamMembers.length);
     const prevMember = () => setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
 
     return (
-        <div className="w-full min-h-screen lg:grid lg:grid-cols-2 bg-white dark:bg-black">
+        <div className="w-full min-h-screen lg:grid lg:grid-cols-2 bg-blue dark:bg-black">
             {/* Left Side: Landing Page Content */}
             <div className="hidden lg:flex flex-col bg-gray-100 dark:bg-gray-900/50 p-10 xl:p-16 overflow-y-auto">
                 <header className="flex items-center gap-4">
-                   <img src="https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png" alt="Nova Logo" className="h-10 w-10"/>
+                   <img src="https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png" alt="Nova Logo" className="h-20 w-20"/>
                    <div>
-                       <h1 className='text-2xl font-bold'>NOVA</h1>
+                       <h1 className='text-3xl font-bold'>NOVA</h1>
                        <p className='text-sm text-muted-foreground'>Igniting Transformation through Google Cloud</p>
                    </div>
                 </header>
