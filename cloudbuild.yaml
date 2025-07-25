@@ -19,7 +19,6 @@ steps:
     - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
     - '--command=pnpm'
     - '--args=run,db:deploy'
-    - '&&' # This allows us to run a second command in the same step
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   id: 'Execute Migration Job'
   entrypoint: 'gcloud'
