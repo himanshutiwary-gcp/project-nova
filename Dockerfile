@@ -8,6 +8,7 @@ COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
 RUN pnpm install --force
 COPY ./nova-backend ./
 RUN pnpm exec prisma generate
+RUN pnpm exec prisma migrate deploy
 RUN pnpm exec tsc --project tsconfig.json
 RUN pnpm install --prod --force
 
