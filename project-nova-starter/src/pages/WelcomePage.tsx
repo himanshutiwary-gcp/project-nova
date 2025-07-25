@@ -95,8 +95,8 @@ const RegisterForm = () => {
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit} className="grid gap-4">
-                    <div className="grid gap-2"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="Dhiraj Kumar Prince" required onChange={handleInputChange} /></div>
-                    <div className="grid gap-2"><Label htmlFor="email">Cognizant/Google Email</Label><Input id="email" name="email" type="email" placeholder="name@cognizant.com" required onChange={handleInputChange} /></div>
+                    <div className="grid gap-2"><Label htmlFor="name">Full Name</Label><Input id="name" name="name" type="text" placeholder="Your full name" required onChange={handleInputChange} /></div>
+                    <div className="grid gap-2"><Label htmlFor="email">Google Email</Label><Input id="email" name="email" type="email" placeholder="name@google.com" required onChange={handleInputChange} /></div>
                     <div className="grid gap-2"><Label>Specialization</Label><Select name="specialization" required onValueChange={(value) => handleSelectChange('specialization', value)}><SelectTrigger><SelectValue placeholder="Select your specialization" /></SelectTrigger><SelectContent>{specializations.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent></Select></div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2"><Label>Role</Label><Select name="role" required onValueChange={(value) => handleSelectChange('role', value)}><SelectTrigger><SelectValue placeholder="Role" /></SelectTrigger><SelectContent>{roles.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent></Select></div>
@@ -114,7 +114,12 @@ const RegisterForm = () => {
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
     // A simple carousel state
     const [currentMember, setCurrentMember] = useState(0);
-    const teamMembers = [{ name: "Dhiraj Kumar Prince", title: "Cloud Storage Engineer", description: "Dhiraj architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "/assets/dhiraj.png" }, { name: "Team Member 2", title: "GKE Specialist", description: "This team member specializes in Kubernetes and Anthos, helping teams orchestrate complex microservice architectures with ease and reliability.", image: "/assets/logo.png" }];
+    const teamMembers = [
+        { name: "Himanshu Tiwary", title: "SME-Networking", description: "Himanshu architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/himanshu.jpg" },
+        { name: "Lavanya Lanka", title: "TSR-Infra", description: "Lavanya architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/lavanya.jpg" }
+        { name: "Anurag Kumar", title: "TSR-Platform", description: "Anurag architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/anurag.jpg" }
+        { name: "Dhiraj Kumar", title: "TSR-Platform", description: "Dhiraj specializes in Kubernetes and Anthos, helping teams orchestrate complex microservice architectures with ease and reliability.", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/dhiraj.jpg" }
+    ];
 
     const nextMember = () => setCurrentMember((prev) => (prev + 1) % teamMembers.length);
     const prevMember = () => setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
@@ -124,7 +129,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
             {/* Left Side: Landing Page Content */}
             <div className="hidden lg:flex flex-col bg-gray-100 dark:bg-gray-900/50 p-10 xl:p-16 overflow-y-auto">
                 <header className="flex items-center gap-4">
-                   <img src="/assets/logo.png" alt="Nova Logo" className="h-10 w-10"/>
+                   <img src="https://storage.googleapis.com/sample-bucket-for-nova/website-images/nova.png" alt="Nova Logo" className="h-10 w-10"/>
                    <div>
                        <h1 className='text-2xl font-bold'>NOVA</h1>
                        <p className='text-sm text-muted-foreground'>Igniting Transformation through Google Cloud</p>
@@ -135,7 +140,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
                     <section id="about" className='mb-16'>
                         <h2 className="text-3xl font-bold tracking-tight">About Project NOVA</h2>
                         <p className="mt-4 max-w-2xl mx-auto text-muted-foreground">Nova is an internal initiative to explore and master Google Cloud by building innovative applications. It's a platform for showcasing our skills, sharing knowledge, and fostering a culture of continuous learning and excellence.</p>
-                        <img src="/assets/illustration.png" alt="GCP Illustration" className="mt-6 mx-auto w-full max-w-lg"/>
+                        <img src="https://storage.googleapis.com/sample-bucket-for-nova/website-images/about_bg.jpg" alt="GCP Illustration" className="mt-6 mx-auto w-full max-w-lg"/>
                     </section>
 
                     <section id="team">
