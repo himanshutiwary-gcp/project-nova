@@ -109,7 +109,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
         },
     };
     const letter = {
-        hidden: { opacity: 0, y: 50 },
+        hidden: { opacity: 0, y: 30 },
         visible: {
             opacity: 1,
             y: 0,
@@ -126,7 +126,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
 
             {/* Content Layer */}
             <div className="w-full min-h-screen relative z-10 flex items-center justify-center p-4">
-                <div className="w-full max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="w-full max-w-8xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     
                     {/* Left Side: The new integrated branding and content */}
                     <div className="flex flex-col gap-8 text-center lg:text-left">
