@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import AppLayout from './components/layout/AppLayout';
+import SavedItemsPage from './pages/SavedItemsPage';  
 import { useAuthStore } from './stores/auth.store';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -52,6 +53,7 @@ function App() {
                   <AppLayout>
                     <Routes>
                       <Route path="/" element={<HomePage />} />
+                      <Route path="/saved" element={<SavedItemsPage />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                   </AppLayout>
