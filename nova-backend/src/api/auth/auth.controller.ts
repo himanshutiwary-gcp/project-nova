@@ -25,39 +25,30 @@ export const handleGoogleLogin = async (req: Request, res: Response) => {
         }
 
         const { email, name, picture } = payload;
-        
-        // Authorization check
-        if (!email.endsWith('@google.com') && !email.endsWith('@cognizant.com')) {
-          return res.status(403).json({ message: 'Access denied. Platform is for Google & Cognizant employees only.'});
-        }
 
+        // --- THIS IS THE KEY CHANGE ---
+        // Find the user by email
         let user = await prisma.user.findUnique({ where: { email } });
 
+        // If user does not exist in our database, reject the login
         if (!user) {
-            user = await prisma.user.create({
-                data: {
-                    email,
-                    name,
-                    pictureUrl: picture,
-                },
-            });
-        } else {
-            // Optionally update user info on every login
-            user = await prisma.user.update({
-                where: { email },
-                data: { name, pictureUrl: picture },
-            });
+            return res.status(403).json({ message: "Account not found. Please register first." });
         }
-        
+
+        // If user exists, update their name and picture from Google, but keep their registered details
+        user = await prisma.user.update({
+            where: { email },
+            data: {
+                name,
+                pictureUrl: picture,
+            },
+        });
+        // -----------------------------
+
         const jwtToken = generateToken(user.id);
 
-        res.status(200).json({
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            pictureUrl: user.pictureUrl,
-            token: jwtToken,
-        });
+        // Return all user data
+        res.status(200).json({ ...user, token: jwtToken });
 
     } catch (error) {
         console.error("Google login error:", error);
