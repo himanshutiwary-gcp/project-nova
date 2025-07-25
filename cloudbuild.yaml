@@ -1,30 +1,33 @@
 steps:
+# Step 1: Build the unified application container. No changes here.
 - name: 'gcr.io/cloud-builders/docker'
+  id: 'Build'
   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
+
+# Step 2: Push the container. No changes here.
 - name: 'gcr.io/cloud-builders/docker'
+  id: 'Push'
   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
+
+# Step 3: Apply Database Migrations. THIS IS THE FIX.
+- name: 'gcr.io/google/cloudsdktool/cloud-sdk'
+  id: 'Apply Database Migrations'
+  entrypoint: 'gcloud'
   args:
-   - 'run'
-   - 'deploy'
-   - 'nova-app'
-   # --- ADD/MODIFY THESE FLAGS ---
-   - '--cpu=1'
-   - '--memory=1Gi'
-   - '--min-instances=1' # This keeps one instance always warm
-   - '--max-instances=2' # Good practice to set a max
-   - '--image'
-   - 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
-   - '--region'
-   - 'us-central1'
-   - '--platform'
-   - 'managed'
-   - '--allow-unauthenticated'
-   - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest,JWT_SECRET=NOVA_JWT_SECRET:latest,VITE_GOOGLE_CLIENT_ID=NOVA_GOOGLE_CLIENT_ID:latest'
-   - '--set-env-vars=DB_USER=postgres'
-   - '--add-cloudsql-instances'
-   - 'nova-staging-cgn:asia-south1:nova-db-staging'
+    # We use 'run deploy' on the migration job. 'deploy' is idempotent:
+    # it will CREATE the job on the first run, and UPDATE it on subsequent runs.
+    - 'run'
+    - 'deploy' 
+    - 'nova-db-migrate' # The name of our one-off migration job
+    - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
+    - '--region=us-central1'
+    - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest'
+    - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
+    # These next two lines override the container's CMD to run the migration script instead.
+    - '--command=pnpm'
+    - '--args=run,db:deploy'
+    # We are now deploying a job, not a service. This will run the command and then exit.
+    # The 'run' command does not need a separate 'execute' step.
 images: ['us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
 options:
  logging: CLOUD_LOGGING_ONLY
