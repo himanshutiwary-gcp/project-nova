@@ -109,7 +109,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
         },
     };
     const letter = {
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 50 },
         visible: {
             opacity: 1,
             y: 0,
@@ -144,7 +144,7 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
                         </motion.div>
 
                         <motion.h2 
-                            className="text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
+                            className="text-3xl lg:text-4xl font-bold tracking-tight leading-tight"
                             variants={sentence}
                             initial="hidden"
                             animate="visible"
