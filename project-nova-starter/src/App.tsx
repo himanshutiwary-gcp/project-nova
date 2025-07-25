@@ -1,21 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
-import AppLayout from './components/layout/AppLayout';
-import SavedItemsPage from './pages/SavedItemsPage';  
 import { useAuthStore } from './stores/auth.store';
-import { Loader2 } from 'lucide-react';
+import WelcomePage from './pages/WelcomePage'; // The new public landing/login/register page
+import HomePage from './pages/HomePage'; // The main app feed
+import AppLayout from './components/layout/AppLayout';
 import { useEffect, useState } from 'react';
+import { Loader2 } from 'lucide-react';
+// Import all your other pages here as you build them
+// import MyNetworkPage from './pages/MyNetworkPage';
 
-// This component replaces the old ProtectedRoute
+// ProtectedRoute now guards the entire authenticated app space
 function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { user } = useAuthStore();
-  
-  // This check is important to prevent a flash of the login page
-  // while the store is rehydrating from localStorage.
   const [isHydrated, setIsHydrated] = useState(false);
 
-  // THE FIX IS HERE: This useEffect is now using the correct, type-safe async/await syntax.
   useEffect(() => {
     const rehydrate = async () => {
       await useAuthStore.persist.rehydrate();
@@ -25,36 +22,34 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
   }, []);
 
   if (!isHydrated) {
-      return (
-        <div className="flex items-center justify-center h-screen">
-          <Loader2 className="w-12 h-12 animate-spin text-primary" />
-        </div>
-      );
+    return <div className="flex items-center justify-center h-screen"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>;
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />; // If not logged in, send to the public Welcome Page
   }
-
   return children;
 }
-
 
 function App() {
     return (
         <Router>
           <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            {/* Public Routes */}
+            <Route path="/" element={<WelcomePage showLogin={true} />} />
+            <Route path="/register" element={<WelcomePage showLogin={false} />} />
+
+            {/* Protected Application Routes */}
             <Route
-              path="/*"
+              path="/app/*" // All app routes now live under /app
               element={
                 <ProtectedRoute>
-                  {/* Pass the actual routes as children to the layout */}
                   <AppLayout>
                     <Routes>
                       <Route path="/" element={<HomePage />} />
-                      <Route path="/saved" element={<SavedItemsPage />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
+                      {/* <Route path="/network" element={<MyNetworkPage />} /> */}
+                      {/* Add other app routes here */}
+                      <Route path="*" element={<Navigate to="/app" replace />} />
                     </Routes>
                   </AppLayout>
                 </ProtectedRoute>
