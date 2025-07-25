@@ -1,20 +1,14 @@
 steps:
-# Step 1: Build the unified application container
-  - name: 'gcr.io/cloud-builders/docker'
-   id: 'Build'
-   args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
-
-# Step 2: Push the container to Artifact Registry
- - name: 'gcr.io/cloud-builders/docker'
-   id: 'Push'
-   args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
-
-# Step 3: Apply Database Migrations using a Cloud Run Job
-# This ensures the database schema is updated BEFORE the app is deployed.
- - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-   id: 'Apply Database Migrations'
-   entrypoint: 'gcloud'
-   args:
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Build'
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA', '.']
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Push'
+  args: ['push', 'us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Apply Database Migrations'
+  entrypoint: 'gcloud'
+  args:
     - 'run'
     - 'jobs'
     - 'execute'
@@ -23,16 +17,13 @@ steps:
     - '--region=us-central1'
     - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest'
     - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
-    # These next two lines tell the container to run our migration script instead of starting the server
     - '--command=pnpm'
     - '--args=run,db:deploy'
     - '--wait' # This is crucial: it forces the build to wait for this step to finish
-
-# Step 4: Deploy the main application service
- - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-   id: 'Deploy Application'
-   entrypoint: 'gcloud'
-   args:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Deploy Application'
+  entrypoint: 'gcloud'
+  args:
     - 'run'
     - 'deploy'
     - 'nova-app'
