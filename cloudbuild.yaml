@@ -11,23 +11,45 @@ steps:
 
 # Step 3: Apply Database Migrations. THIS IS THE FIX.
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'Apply Database Migrations'
+  id: 'Configure Migration Job'
   entrypoint: 'gcloud'
   args:
-    # We use 'run deploy' on the migration job. 'deploy' is idempotent:
-    # it will CREATE the job on the first run, and UPDATE it on subsequent runs.
     - 'run'
-    - 'deploy' 
-    - 'nova-db-migrate' # The name of our one-off migration job
+    - 'jobs'
+    - 'update' # 'update' is idempotent: creates if not exists, updates if it does.
+    - 'nova-db-migrate' # The name of our job
     - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA'
     - '--region=us-central1'
-    - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest'
+    - '--set-secrets=DATABASE_URL=NOVA_DB_URL:latest,JWT_SECRET=NOVA_JWT_SECRET:latest,VITE_GOOGLE_CLIENT_ID=NOVA_GOOGLE_CLIENT_ID:latest'
     - '--add-cloudsql-instances=nova-staging-cgn:asia-south1:nova-db-staging'
-    # These next two lines override the container's CMD to run the migration script instead.
     - '--command=pnpm'
     - '--args=run,db:deploy'
-    # We are now deploying a job, not a service. This will run the command and then exit.
-    # The 'run' command does not need a separate 'execute' step.
+    - '--max-retries=1'
+    - '--task-timeout=5m'
+
+# Step 3b: EXECUTE the Job we just configured
+# This step runs the job and waits for it to finish.
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Execute Migration Job'
+  entrypoint: 'gcloud'
+  args:
+    - 'run'
+    - 'jobs'
+    - 'execute'
+    - 'nova-db-migrate'
+    - '--region=us-central1'
+    - '--wait' # Wait for the migration to complete successfully
+
+# Step 4: Deploy the main application service (This comes AFTER migrations)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Deploy Application'
+  entrypoint: 'gcloud'
+  args:
+    # ... all the arguments for deploying nova-app are here ...
+    - 'run'
+    - 'deploy'
+    - 'nova-app'
+    # ... etc
 images: ['us-central1-docker.pkg.dev/$PROJECT_ID/nova-repo/nova-app:$COMMIT_SHA']
 options:
  logging: CLOUD_LOGGING_ONLY
