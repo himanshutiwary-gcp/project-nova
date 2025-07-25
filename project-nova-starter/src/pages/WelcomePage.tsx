@@ -113,7 +113,7 @@ const RegisterForm = () => {
 // --- MAIN WELCOME PAGE COMPONENT ---
 const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
     // A simple carousel state
-    const [currentMember, setCurrentMember] = useState(0);
+    //const [currentMember, setCurrentMember] = useState(0);
    // const teamMembers = [
      //   { name: "Himanshu Tiwary", title: "SME-Networking", description: "Himanshu architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/himanshu.jpg" },
        // { name: "Lavanya Lanka", title: "TSR-Infra", description: "Lavanya architects and manages the cloud storage infrastructure, ensuring data is securely stored, highly available, and cost-effectively managed. He implements data protection strategies, including backups and disaster recovery...", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/lavanya.jpg" },
@@ -121,8 +121,8 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
        // { name: "Dhiraj Kumar", title: "TSR-Platform", description: "Dhiraj specializes in Kubernetes and Anthos, helping teams orchestrate complex microservice architectures with ease and reliability.", image: "https://storage.googleapis.com/sample-bucket-for-nova/profile-picture/dhiraj.jpg" },
     //];
 
-    const nextMember = () => setCurrentMember((prev) => (prev + 1) % teamMembers.length);
-    const prevMember = () => setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
+    //const nextMember = () => setCurrentMember((prev) => (prev + 1) % teamMembers.length);
+    //const prevMember = () => setCurrentMember((prev) => (prev - 1 + teamMembers.length) % teamMembers.length);
 
     return (
         <div className="w-full min-h-screen lg:grid lg:grid-cols-2 bg-blue dark:bg-black">
@@ -143,21 +143,21 @@ const WelcomePage = ({ showLogin }: { showLogin: boolean }) => {
                         <img src="https://storage.googleapis.com/sample-bucket-for-nova/website-images/about_bg.jpg" alt="GCP Illustration" className="mt-6 mx-auto w-full max-w-lg"/>
                     </section>
 
-                    <section id="team">
-                        <h2 className="text-3xl font-bold tracking-tight">Meet Our Team</h2>
-                        <div className='mt-8 relative'>
-                            <div className='flex items-center justify-center gap-8'>
-                                <Button onClick={prevMember} variant='outline' size='icon' className='rounded-full h-12 w-12 shrink-0'><ArrowLeft/></Button>
-                                <div className='text-center w-full max-w-lg'>
-                                    <img src={teamMembers[currentMember].image} alt={teamMembers[currentMember].name} className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-primary shadow-lg mb-4"/>
-                                    <h3 className="text-2xl font-semibold">{teamMembers[currentMember].name}</h3>
-                                    <p className="text-md text-primary font-medium">{teamMembers[currentMember].title}</p>
-                                    <p className="mt-3 text-sm text-muted-foreground h-24">{teamMembers[currentMember].description}</p>
-                                </div>
-                                <Button onClick={nextMember} variant='outline' size='icon' className='rounded-full h-12 w-12 shrink-0'><ArrowRight/></Button>
-                            </div>
-                        </div>
-                    </section>
+                  //  <section id="team">
+                    //    <h2 className="text-3xl font-bold tracking-tight">Meet Our Team</h2>
+                      //  <div className='mt-8 relative'>
+                        //    <div className='flex items-center justify-center gap-8'>
+                          //      <Button onClick={prevMember} variant='outline' size='icon' className='rounded-full h-12 w-12 shrink-0'><ArrowLeft/></Button>
+                            //    <div className='text-center w-full max-w-lg'>
+                              //      <img src={teamMembers[currentMember].image} alt={teamMembers[currentMember].name} className="w-40 h-40 rounded-full object-cover mx-auto border-4 border-primary shadow-lg mb-4"/>
+                                //    <h3 className="text-2xl font-semibold">{teamMembers[currentMember].name}</h3>
+                                  //  <p className="text-md text-primary font-medium">{teamMembers[currentMember].title}</p>
+                                  //  <p className="mt-3 text-sm text-muted-foreground h-24">{teamMembers[currentMember].description}</p>
+                               // </div>
+                               // <Button onClick={nextMember} variant='outline' size='icon' className='rounded-full h-12 w-12 shrink-0'><ArrowRight/></Button>
+                            // </div>
+                        // </div>
+                    // </section>
                 </main>
             </div>
 
