@@ -37,7 +37,7 @@ export const CreatePostModal = ({ isOpen, onOpenChange }: CreatePostModalProps) 
                     <DialogTitle>Share an Innovation</DialogTitle>
                     <DialogDescription>Your post will be visible to the community after admin approval.</DialogDescription>
                 </DialogHeader>
-                <Textarea placeholder="What's on your mind?" className="min-h-32" value={content} onChange={(e) => setContent(e.target.value)} />
+                <Textarea placeholder="What's on your mind?" className="min-h-32" value={content} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)} />
                 <DialogFooter>
                     <Button type="submit" onClick={handleSubmit} disabled={createPostMutation.isPending || !content.trim()}>
                         {createPostMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -47,4 +47,4 @@ export const CreatePostModal = ({ isOpen, onOpenChange }: CreatePostModalProps) 
             </DialogContent>
         </Dialog>
     );
-};
+};  

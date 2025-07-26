@@ -8,7 +8,9 @@ export interface PostType {
     id: string;
     content: string;
     createdAt: string;
-    author: { name: string; pictureUrl: string | null; title: string | null; };
+    author: { id: string; name: string; pictureUrl: string | null; title: string | null; }; // Author now includes an ID
+    authorId: string; // The API now sends this directly too
+    approved: boolean; // The new approval field
     _count: { likes: number };
     likedByMe: boolean;
 }
