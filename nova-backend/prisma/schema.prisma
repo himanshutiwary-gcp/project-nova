@@ -36,12 +36,14 @@ model Post {
   content    String
   mediaUrl   String?
   mediaType  String? // 'IMAGE' or 'VIDEO'
+  approved  Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   author     User     @relation(fields: [authorId], references: [id])
   authorId   String
   likes      Like[]
   tags       Tag[]    @relation("PostTags")
+
 }
 
 model Like {

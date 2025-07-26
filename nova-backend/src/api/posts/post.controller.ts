@@ -2,32 +2,31 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../../config/prisma';
 
-// GET /api/posts - Get all posts for the feed
+// GET /api/posts - Get all APPROVED posts for the feed
 export const getPosts = async (req: AuthRequest, res: Response) => {
     try {
+        // --- THIS IS THE KEY CHANGE ---
+        // We now add a 'where' clause to only fetch approved posts.
         const posts = await prisma.post.findMany({
+            where: { approved: true }, // Only get approved posts
             orderBy: { createdAt: 'desc' },
             include: {
                 author: {
-                    select: { name: true, pictureUrl: true, title: true }
+                    select: { id: true, name: true, pictureUrl: true, title: true }
                 },
                 likes: {
                     select: { userId: true }
-                },
-                tags: {
-                    select: { name: true }
                 },
                 _count: {
                     select: { likes: true }
                 }
             }
         });
-        
-        // Add a 'likedByMe' field to each post for the frontend
+
         const postsWithLikeStatus = posts.map(post => ({
             ...post,
             likedByMe: post.likes.some(like => like.userId === req.user?.id)
-        }))
+        }));
 
         res.status(200).json(postsWithLikeStatus);
     } catch (error) {
@@ -42,6 +41,10 @@ export const createPost = async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).json({ message: "Not authorized" });
 
     try {
+        // --- THIS IS THE KEY CHANGE ---
+        // The 'approved' field is now handled automatically by the schema's
+        // @default(false) directive. We don't need to explicitly set it here.
+        // Prisma is smart enough to apply the default.
         const newPost = await prisma.post.create({
             data: {
                 content,
