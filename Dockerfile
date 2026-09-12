@@ -20,21 +20,14 @@ RUN npm install -g pnpm
 COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
 COPY ./project-nova-starter/tsconfig*.json ./
 COPY ./project-nova-starter/vite.config.ts ./
-RUN pnpm install --force
+# Add the --unsafe-perm flag to allow build scripts to run
+RUN pnpm install --force --unsafe-perm
 COPY ./project-nova-starter ./
-
-# --- THE FINAL DEBUGGING STEP ---
-# Print the contents of tsconfig.json to the log.
-RUN echo "--- Verifying tsconfig.json contents ---" && cat tsconfig.json
-# --------------------------------
-
-# Run the build command with the explicit project flag
 RUN pnpm run build
 
 # --- Stage 3: Final Production Image ---
 FROM node:18-alpine
 WORKDIR /app
-
 # Copy backend dependencies
 COPY --from=backend-builder /app/node_modules ./node_modules
 # Copy compiled backend code
@@ -42,9 +35,7 @@ COPY --from=backend-builder /app/dist ./dist
 # Copy backend package and schema files
 COPY --from=backend-builder /app/package.json .
 COPY --from=backend-builder /app/prisma ./prisma
-
 # Copy built frontend files
 COPY --from=frontend-builder /app/dist ./public
-
 EXPOSE 8080
 CMD [ "node", "dist/index.js" ]
