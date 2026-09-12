@@ -4,6 +4,10 @@
 FROM node:18-slim AS backend-builder
 WORKDIR /app
 RUN npm install -g pnpm
+
+# Create .npmrc to allow all installation scripts to run
+RUN echo "ignore-scripts=false" > .npmrc
+
 COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
 RUN pnpm install --force
 COPY ./nova-backend ./
@@ -17,11 +21,14 @@ RUN pnpm install --prod --force
 FROM node:18-slim AS frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
+
+# Create .npmrc to allow all installation scripts to run
+RUN echo "ignore-scripts=false" > .npmrc
+
 COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
 COPY ./project-nova-starter/tsconfig*.json ./
 COPY ./project-nova-starter/vite.config.ts ./
-# Add the --unsafe-perm flag to allow build scripts to run
-RUN pnpm install --force --unsafe-perm
+RUN pnpm install --force
 COPY ./project-nova-starter ./
 RUN pnpm run build
 
