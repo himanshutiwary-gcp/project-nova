@@ -3,13 +3,13 @@
 # =================================================================
 FROM node:18-slim AS backend-builder
 WORKDIR /app
-RUN npm install -g pnpm
 
-# Create .npmrc to allow all installation scripts to run
-RUN echo "ignore-scripts=false" > .npmrc
+# Install a specific, known-good version of pnpm
+RUN npm install -g pnpm@8
 
 COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
-RUN pnpm install --force
+# The --unsafe-perm flag is added back as a safeguard with this pnpm version
+RUN pnpm install --force --unsafe-perm
 COPY ./nova-backend ./
 RUN pnpm exec prisma generate
 RUN pnpm exec tsc --project tsconfig.json
@@ -20,15 +20,15 @@ RUN pnpm install --prod --force
 # =================================================================
 FROM node:18-slim AS frontend-builder
 WORKDIR /app
-RUN npm install -g pnpm
 
-# Create .npmrc to allow all installation scripts to run
-RUN echo "ignore-scripts=false" > .npmrc
+# Install the same specific version of pnpm
+RUN npm install -g pnpm@8
 
 COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
 COPY ./project-nova-starter/tsconfig*.json ./
 COPY ./project-nova-starter/vite.config.ts ./
-RUN pnpm install --force
+# The --unsafe-perm flag is also used here
+RUN pnpm install --force --unsafe-perm
 COPY ./project-nova-starter ./
 RUN pnpm run build
 
@@ -46,3 +46,4 @@ COPY --from=backend-builder /app/prisma ./prisma
 COPY --from=frontend-builder /app/dist ./public
 EXPOSE 8080
 CMD [ "node", "dist/index.js" ]
+
