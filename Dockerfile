@@ -1,7 +1,7 @@
 # =================================================================
 # Stage 1: Backend Dependencies & Builder
 # =================================================================
-FROM node:18-alpine AS backend-builder
+FROM node:18-slim AS backend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
