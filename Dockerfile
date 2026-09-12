@@ -14,7 +14,7 @@ RUN pnpm install --prod --force
 # =================================================================
 # Stage 2: Frontend Dependencies & Builder
 # =================================================================
-FROM node:18-alpine AS frontend-builder
+FROM node:18-slim AS frontend-builder
 WORKDIR /app
 RUN npm install -g pnpm
 COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
