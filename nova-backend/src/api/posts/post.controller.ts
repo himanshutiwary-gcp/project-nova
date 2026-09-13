@@ -2,29 +2,13 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../../config/prisma';
 
-// GET /api/posts - Get all APPROVED posts for the feed, with optional filtering
+// GET /api/posts - Get all APPROVED posts for the feed
 export const getPosts = async (req: AuthRequest, res: Response) => {
     try {
-        // --- FIX: Safely handle the 'specialization' query parameter ---
-        const { specialization: specializationQuery } = req.query;
-
-        // Take only the first value if it's an array, otherwise use the string value.
-        const specialization = Array.isArray(specializationQuery) 
-            ? specializationQuery[0] 
-            : specializationQuery;
-        
-        // Build the filter object
-        const whereClause: { approved: boolean; specialization?: string } = {
-            approved: true,
-        };
-
-        // If a specialization is provided, add it to the filter
-        if (specialization) {
-            whereClause.specialization = specialization;
-        }
-
+        // --- THIS IS THE KEY CHANGE ---
+        // We now add a 'where' clause to only fetch approved posts.
         const posts = await prisma.post.findMany({
-            where: whereClause, // Use the dynamically built where clause
+            where: { approved: true }, // Only get approved posts
             orderBy: { createdAt: 'desc' },
             include: {
                 author: {
@@ -57,6 +41,10 @@ export const createPost = async (req: AuthRequest, res: Response) => {
     if (!req.user) return res.status(401).json({ message: "Not authorized" });
 
     try {
+        // --- THIS IS THE KEY CHANGE ---
+        // The 'approved' field is now handled automatically by the schema's
+        // @default(false) directive. We don't need to explicitly set it here.
+        // Prisma is smart enough to apply the default.
         const newPost = await prisma.post.create({
             data: {
                 content,
@@ -106,4 +94,4 @@ export const toggleLike = async (req: AuthRequest, res: Response) => {
         console.error(error);
         res.status(500).json({ message: 'Error toggling like' });
     }
-};
+}
