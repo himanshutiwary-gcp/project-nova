@@ -1,15 +1,8 @@
-# =================================================================
-# Stage 1: Backend Dependencies & Builder
-# =================================================================
-FROM node:18-slim AS backend-builder
+FROM node:18-alpine AS backend-builder
 WORKDIR /app
-
-# Install a specific, known-good version of pnpm
-RUN npm install -g pnpm@8
-
+RUN npm install -g pnpm
 COPY ./nova-backend/package.json ./nova-backend/pnpm-lock.yaml ./
-# The --unsafe-perm flag is added back as a safeguard with this pnpm version
-RUN pnpm install --force --unsafe-perm
+RUN pnpm install --force
 COPY ./nova-backend ./
 RUN pnpm exec prisma generate
 RUN pnpm exec tsc --project tsconfig.json
@@ -18,23 +11,27 @@ RUN pnpm install --prod --force
 # =================================================================
 # Stage 2: Frontend Dependencies & Builder
 # =================================================================
-FROM node:18-slim AS frontend-builder
+FROM node:18-alpine AS frontend-builder
 WORKDIR /app
-
-# Install the same specific version of pnpm
-RUN npm install -g pnpm@8
-
+RUN npm install -g pnpm
 COPY ./project-nova-starter/package.json ./project-nova-starter/pnpm-lock.yaml ./
 COPY ./project-nova-starter/tsconfig*.json ./
 COPY ./project-nova-starter/vite.config.ts ./
-# The --unsafe-perm flag is also used here
-RUN pnpm install --force --unsafe-perm
+RUN pnpm install --force
 COPY ./project-nova-starter ./
+
+# --- THE FINAL DEBUGGING STEP ---
+# Print the contents of tsconfig.json to the log.
+RUN echo "--- Verifying tsconfig.json contents ---" && cat tsconfig.json
+# --------------------------------
+
+# Run the build command with the explicit project flag
 RUN pnpm run build
 
 # --- Stage 3: Final Production Image ---
 FROM node:18-alpine
 WORKDIR /app
+
 # Copy backend dependencies
 COPY --from=backend-builder /app/node_modules ./node_modules
 # Copy compiled backend code
@@ -42,8 +39,9 @@ COPY --from=backend-builder /app/dist ./dist
 # Copy backend package and schema files
 COPY --from=backend-builder /app/package.json .
 COPY --from=backend-builder /app/prisma ./prisma
+
 # Copy built frontend files
 COPY --from=frontend-builder /app/dist ./public
+
 EXPOSE 8080
 CMD [ "node", "dist/index.js" ]
-
